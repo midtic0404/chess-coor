@@ -1,0 +1,77 @@
+/* Modern minimalist styles */
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #121212;
+}
+
+/* Chess board styles */
+.chess-board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid #121212;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Board squares */
+.square {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+/* Light squares */
+.square.light {
+  background-color: #f0f0f0;
+}
+
+/* Dark squares */
+.square.dark {
+  background-color: #b58863;
+}
+
+/* Highlight colors */
+.square.correct {
+  background-color: #4caf50 !important;
+}
+
+.square.incorrect {
+  background-color: #f44336 !important;
+}
+
+/* Coordinate label in square */
+.coord-label {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+/* Board orientation */
+.chess-board.black {
+  transform: rotate(180deg);
+}
+
+.chess-board.black .square {
+  transform: rotate(180deg);
+}
+
+/* Modern UI Components */
+button {
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+.container {
+  max-width: 1000px;
+}

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Coordinate Trainer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-[#F9F4EC] min-h-screen flex items-center justify-center p-4">
+    <div class="container max-w-3xl mx-auto bg-white rounded-lg shadow-2xl p-6" x-data="chessTrainer()">
+        <h1 class="text-3xl font-bold text-center mb-8 tracking-tight">Chess Coordinate Trainer</h1>
+        
+        <!-- Game Mode Selection -->
+        <div class="mb-8" x-show="!gameStarted">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">Select Game Mode</h2>
+            <div class="flex flex-wrap gap-3">
+                <button @click="startGame('white')" class="px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 font-medium">Play as White</button>
+                <button @click="startGame('black')" class="px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 font-medium">Play as Black</button>
+                <button @click="startGame('random')" class="px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 font-medium">Random Perspective</button>
+            </div>
+        </div>
+        
+        <!-- Game UI -->
+        <div x-show="gameStarted" class="flex flex-col md:flex-row gap-8 mt-8">
+            <!-- Board -->
+            <div class="flex-1">
+                <div class="aspect-square w-full relative mt-24">
+                    <!-- Target Coordinate - hidden when game is over -->
+                    <div class="absolute -top-20 left-0 right-0 text-center" x-show="gameStarted && !gameEnded">
+                        <span class="text-5xl font-bold" x-text="currentCoordinate"></span>
+                    </div>
+                    
+                    <!-- Chess Board -->
+                    <div x-ref="chessboard" class="chess-board w-full h-full aspect-square" :class="boardOrientation">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Game Stats -->
+            <div class="flex-1 flex flex-col">
+                <div class="mb-4 p-5 bg-gray-50 rounded-md border border-gray-200">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-xl font-semibold text-gray-800">Stats</h2>
+                        <span class="px-3 py-1 bg-gray-200 rounded-full text-sm font-medium" :class="{'bg-gray-800 text-white': boardOrientation === 'black', 'bg-white border border-gray-300': boardOrientation === 'white'}">
+                            Playing as <span x-text="boardOrientation.charAt(0).toUpperCase() + boardOrientation.slice(1)"></span>
+                        </span>
+                    </div>
+                    <p class="mb-2"><span class="font-semibold">Time:</span> <span x-text="formatTime(timer)"></span></p>
+                    <p class="mb-2"><span class="font-semibold">Score:</span> <span x-text="score"></span> / <span x-text="totalQuestions"></span></p>
+                    <p class="mb-2"><span class="font-semibold">Accuracy:</span> <span x-text="getAccuracy()"></span>%</p>
+                    <p><span class="font-semibold">Avg Response Time:</span> <span x-text="getAverageTime()"></span>s</p>
+                </div>
+                
+                <div class="mb-4 p-5 bg-gray-50 rounded-md border border-gray-200">
+                    <h2 class="text-xl font-semibold mb-3 text-gray-800">Settings</h2>
+                    <div class="flex items-center mb-3">
+                        <input id="showCoordinates" type="checkbox" x-model="showCoordinates" @change="updateCoordinateVisibility()" class="mr-3 h-4 w-4">
+                        <label for="showCoordinates" class="text-gray-700">Show Coordinates</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input id="useRandomColors" type="checkbox" x-model="useRandomColors" @change="updateCoordinateVisibility()" class="mr-3 h-4 w-4">
+                        <label for="useRandomColors" class="text-gray-700">Random Square Colors</label>
+                    </div>
+                </div>
+                
+                <button @click="endGame()" class="mt-auto px-6 py-3 bg-gray-900 text-white rounded-md hover:bg-gray-800 font-medium">End Game</button>
+            </div>
+        </div>
+        
+        <!-- Results Screen -->
+        <div x-show="gameEnded" class="mt-8 p-6 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-5 text-center text-gray-800">Game Results</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <p class="mb-2"><span class="font-semibold">Total Time:</span> <span x-text="formatTime(timer)"></span></p>
+                    <p class="mb-2"><span class="font-semibold">Final Score:</span> <span x-text="score"></span> / <span x-text="totalQuestions"></span></p>
+                    <p class="mb-2"><span class="font-semibold">Final Accuracy:</span> <span x-text="getAccuracy()"></span>%</p>
+                    <p><span class="font-semibold">Avg Response Time:</span> <span x-text="getAverageTime()"></span>s</p>
+                </div>
+                <div class="flex flex-col items-center justify-center">
+                    <button @click="resetGame()" class="w-full mb-3 px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 font-medium">Play Again</button>
+                    <button @click="saveResults()" class="w-full px-6 py-3 bg-gray-800 text-white rounded-md hover:bg-black font-medium relative" :disabled="saveStatus">
+                        <span x-show="!saveStatus">Save Results</span>
+                        <span x-show="saveStatus" class="flex items-center justify-center">
+                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Saved!
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- High Scores -->
+        <div class="mt-8" x-show="!gameStarted">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">High Scores</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-3 text-left">Date</th>
+                            <th class="px-4 py-3 text-left">Orientation</th>
+                            <th class="px-4 py-3 text-left">Score</th>
+                            <th class="px-4 py-3 text-left">Accuracy</th>
+                            <th class="px-4 py-3 text-left">Avg Time</th>
+                            <th class="px-4 py-3 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="(result, index) in savedResults" :key="index">
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="px-4 py-3" x-text="new Date(result.date).toLocaleDateString()"></td>
+                                <td class="px-4 py-3" x-text="result.orientation"></td>
+                                <td class="px-4 py-3" x-text="`${result.score}/${result.total}`"></td>
+                                <td class="px-4 py-3" x-text="`${result.accuracy}%`"></td>
+                                <td class="px-4 py-3" x-text="`${result.avgTime}s`"></td>
+                                <td class="px-4 py-3 text-center">
+                                    <button @click="removeRecord(index)" class="text-red-600 hover:text-red-800 transition-colors" title="Remove record">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/app.js"></script>
+</body>
+</html>
