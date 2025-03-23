@@ -18,10 +18,22 @@
         <!-- Game Mode Selection -->
         <div class="mb-8" x-show="!gameStarted">
             <h2 class="text-xl font-semibold mb-4 text-gray-800">Select Game Mode</h2>
-            <div class="flex flex-wrap gap-3">
+            <div class="flex flex-wrap gap-3 mb-6">
                 <button @click="startGame('white')" class="px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 font-medium">Play as White</button>
                 <button @click="startGame('black')" class="px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 font-medium">Play as Black</button>
                 <button @click="startGame('random')" class="px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 font-medium">Random Perspective</button>
+            </div>
+            
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">Number of Rounds</h2>
+            <div class="flex flex-wrap gap-3">
+                <template x-for="count in availableRounds" :key="count">
+                    <button 
+                        @click="maxQuestions = count" 
+                        class="px-5 py-2 rounded-md font-medium transition-colors"
+                        :class="maxQuestions === count ? 'bg-black text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'"
+                        x-text="count">
+                    </button>
+                </template>
             </div>
         </div>
         
@@ -52,6 +64,7 @@
                     </div>
                     <p class="mb-2"><span class="font-semibold">Time:</span> <span x-text="formatTime(timer)"></span></p>
                     <p class="mb-2"><span class="font-semibold">Score:</span> <span x-text="score"></span> / <span x-text="totalQuestions"></span></p>
+                    <p class="mb-2"><span class="font-semibold">Rounds:</span> <span x-text="maxQuestions"></span></p>
                     <p class="mb-2"><span class="font-semibold">Accuracy:</span> <span x-text="getAccuracy()"></span>%</p>
                     <p><span class="font-semibold">Avg Response Time:</span> <span x-text="getAverageTime()"></span>s</p>
                 </div>
@@ -79,6 +92,7 @@
                 <div>
                     <p class="mb-2"><span class="font-semibold">Total Time:</span> <span x-text="formatTime(timer)"></span></p>
                     <p class="mb-2"><span class="font-semibold">Final Score:</span> <span x-text="score"></span> / <span x-text="totalQuestions"></span></p>
+                    <p class="mb-2"><span class="font-semibold">Rounds Played:</span> <span x-text="maxQuestions"></span></p>
                     <p class="mb-2"><span class="font-semibold">Final Accuracy:</span> <span x-text="getAccuracy()"></span>%</p>
                     <p><span class="font-semibold">Avg Response Time:</span> <span x-text="getAverageTime()"></span>s</p>
                 </div>
@@ -108,6 +122,7 @@
                             <th class="px-4 py-3 text-left">Date</th>
                             <th class="px-4 py-3 text-left">Orientation</th>
                             <th class="px-4 py-3 text-left">Score</th>
+                            <th class="px-4 py-3 text-left">Rounds</th>
                             <th class="px-4 py-3 text-left">Accuracy</th>
                             <th class="px-4 py-3 text-left">Avg Time</th>
                             <th class="px-4 py-3 text-center">Action</th>
@@ -119,6 +134,7 @@
                                 <td class="px-4 py-3" x-text="new Date(result.date).toLocaleDateString()"></td>
                                 <td class="px-4 py-3" x-text="result.orientation"></td>
                                 <td class="px-4 py-3" x-text="`${result.score}/${result.total}`"></td>
+                                <td class="px-4 py-3" x-text="result.rounds || result.total"></td>
                                 <td class="px-4 py-3" x-text="`${result.accuracy}%`"></td>
                                 <td class="px-4 py-3" x-text="`${result.avgTime}s`"></td>
                                 <td class="px-4 py-3 text-center">

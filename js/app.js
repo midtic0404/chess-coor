@@ -19,8 +19,9 @@ function chessTrainer() {
         // Settings
         showCoordinates: false,
         useRandomColors: false,
-        maxQuestions: 20,
+        maxQuestions: 10, // Default to 10 rounds
         savedResults: [],
+        availableRounds: [5, 10, 15, 20],
         
         // Chess constants
         files: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
@@ -184,6 +185,7 @@ function chessTrainer() {
                 orientation: this.boardOrientation.charAt(0).toUpperCase() + this.boardOrientation.slice(1), // Capitalize first letter
                 score: this.score,
                 total: this.totalQuestions,
+                rounds: this.maxQuestions,
                 accuracy: this.getAccuracy(),
                 avgTime: this.getAverageTime(),
                 history: this.history
