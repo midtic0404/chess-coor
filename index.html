@@ -38,7 +38,7 @@
         </div>
         
         <!-- Game UI -->
-        <div x-show="gameStarted" class="flex flex-col md:flex-row gap-8 mt-8">
+        <div x-show="gameStarted && !gameEnded" class="flex flex-col md:flex-row gap-8 mt-8">
             <!-- Board -->
             <div class="flex-1">
                 <div class="aspect-square w-full relative mt-24">
@@ -86,19 +86,19 @@
         </div>
         
         <!-- Results Screen -->
-        <div x-show="gameEnded" class="mt-8 p-6 bg-gray-50 rounded-md border border-gray-200">
-            <h2 class="text-2xl font-semibold mb-5 text-center text-gray-800">Game Results</h2>
+        <div x-show="gameEnded" class="max-w-2xl mx-auto mt-8 p-8 bg-gray-50 rounded-md border border-gray-200 shadow-lg">
+            <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Game Results</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <p class="mb-2"><span class="font-semibold">Total Time:</span> <span x-text="formatTime(timer)"></span></p>
-                    <p class="mb-2"><span class="font-semibold">Final Score:</span> <span x-text="score"></span> / <span x-text="totalQuestions"></span></p>
-                    <p class="mb-2"><span class="font-semibold">Rounds Played:</span> <span x-text="maxQuestions"></span></p>
-                    <p class="mb-2"><span class="font-semibold">Final Accuracy:</span> <span x-text="getAccuracy()"></span>%</p>
-                    <p><span class="font-semibold">Avg Response Time:</span> <span x-text="getAverageTime()"></span>s</p>
+                <div class="bg-white p-5 rounded-md shadow-sm border border-gray-100">
+                    <p class="mb-3 text-lg"><span class="font-bold text-gray-700">Total Time:</span> <span class="font-semibold" x-text="formatTime(timer)"></span></p>
+                    <p class="mb-3 text-lg"><span class="font-bold text-gray-700">Final Score:</span> <span class="font-semibold" x-text="score"></span> / <span x-text="totalQuestions"></span></p>
+                    <p class="mb-3 text-lg"><span class="font-bold text-gray-700">Rounds Played:</span> <span class="font-semibold" x-text="maxQuestions"></span></p>
+                    <p class="mb-3 text-lg"><span class="font-bold text-gray-700">Final Accuracy:</span> <span class="font-semibold" x-text="getAccuracy()"></span>%</p>
+                    <p class="text-lg"><span class="font-bold text-gray-700">Avg Response Time:</span> <span class="font-semibold" x-text="getAverageTime()"></span>s</p>
                 </div>
                 <div class="flex flex-col items-center justify-center">
-                    <button @click="resetGame()" class="w-full mb-3 px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 font-medium">Play Again</button>
-                    <button @click="saveResults()" class="w-full px-6 py-3 bg-gray-800 text-white rounded-md hover:bg-black font-medium relative" :disabled="saveStatus">
+                    <button @click="resetGame()" class="w-full mb-4 px-6 py-4 bg-black text-white rounded-md hover:bg-gray-800 font-medium text-lg shadow-md transition-all hover:translate-y-[-2px]">Play Again</button>
+                    <button @click="saveResults()" class="w-full px-6 py-4 bg-gray-800 text-white rounded-md hover:bg-black font-medium text-lg shadow-md transition-all hover:translate-y-[-2px] relative" :disabled="saveStatus">
                         <span x-show="!saveStatus">Save Results</span>
                         <span x-show="saveStatus" class="flex items-center justify-center">
                             <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
