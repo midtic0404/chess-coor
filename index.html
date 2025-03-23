@@ -38,13 +38,13 @@
         </div>
         
         <!-- Game UI -->
-        <div x-show="gameStarted && !gameEnded" class="flex flex-col md:flex-row gap-8 mt-8">
+        <div x-show="gameStarted && !gameEnded" class="flex flex-col md:flex-row gap-8 mt-8 md:items-start">
             <!-- Board -->
-            <div class="flex-1">
+            <div class="flex-1 md:flex-[1.2]">
                 <div class="aspect-square w-full relative mt-24">
                     <!-- Target Coordinate - hidden when game is over -->
                     <div class="absolute -top-20 left-0 right-0 text-center" x-show="gameStarted && !gameEnded">
-                        <span class="text-5xl font-bold" x-text="currentCoordinate"></span>
+                        <span class="text-6xl font-bold" x-text="currentCoordinate"></span>
                     </div>
                     
                     <!-- Chess Board -->

@@ -52,9 +52,9 @@ body {
 
 /* Coordinate label in square */
 .coord-label {
-  font-size: 0.75rem;
-  opacity: 0.7;
-  font-weight: 500;
+  font-size: 0.85rem;
+  opacity: 0.8;
+  font-weight: 600;
 }
 
 /* Board orientation */
