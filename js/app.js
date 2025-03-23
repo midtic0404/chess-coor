@@ -18,7 +18,6 @@ function chessTrainer() {
         
         // Settings
         showCoordinates: false,
-        useRandomColors: false,
         maxQuestions: 10, // Default to 10 rounds
         savedResults: [],
         availableRounds: [5, 10, 15, 20],
@@ -141,20 +140,6 @@ function chessTrainer() {
                     label.className = 'coord-label';
                     label.textContent = coord;
                     square.appendChild(label);
-                }
-                
-                // Update random colors if enabled
-                if (this.useRandomColors) {
-                    const isLight = square.classList.contains('light');
-                    const hue = Math.floor(Math.random() * 360);
-                    // Maintain contrast between light and dark squares
-                    const saturation = isLight ? '70%' : '50%';
-                    const lightness = isLight ? '80%' : '40%';
-                    
-                    square.style.backgroundColor = `hsl(${hue}, ${saturation}, ${lightness})`;
-                } else {
-                    // Reset to default colors
-                    square.style.backgroundColor = '';
                 }
             });
         },
